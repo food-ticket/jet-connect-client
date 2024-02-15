@@ -2,6 +2,7 @@
 
 namespace Foodticket\JetConnect;
 
+use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -46,11 +47,16 @@ class JetConnectWebhook
 
     public static function fromNotification(array $notification): self
     {
+        $type = Arr::get($notification, 'type');
         $restaurantId = Arr::get($notification, 'location.id') ?? Arr::get($notification, 'posLocationId');
         $resourceId = Arr::get($notification, 'id');
 
+        if (! $type) {
+            throw new InvalidArgumentException();
+        }
+
         return new self(
-            $notification['type'],
+            $type,
             $restaurantId,
             $resourceId,
             $notification

@@ -21,9 +21,9 @@ class WebhookController extends Controller
             return response()->json('Invalid signature', 401);
         }
 
-        $webhook = $this->transformNotification($request);
-
         try {
+            $webhook = $this->transformNotification($request);
+
             Event::dispatch($webhook->eventName(), $webhook);
 
             return response()->noContent(200, ['Content-Type' => 'application/json']);
