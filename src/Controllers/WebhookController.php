@@ -43,22 +43,22 @@ class WebhookController extends Controller
 
     private function shouldValidateApiKey(): bool
     {
-        return ! empty(config('jet-connect.client_api_key'));
+        return ! empty(config('jet-connect.webhook_api_key'));
     }
 
     private function hasValidApiKey(Request $request): bool
     {
-        return $request->header('Authorization') === config('jet-connect.client_api_key');
+        return $request->header('Authorization') === config('jet-connect.webhook_api_key');
     }
 
     private function shouldValidateSignature(): bool
     {
-        return ! empty(config('jet-connect.client_secret'));
+        return ! empty(config('jet-connect.webhook_secret'));
     }
 
     private function hasValidSignature(Request $request): bool
     {
-        $signature = hash_hmac('sha256', $request->getContent(), config('jet-connect.client_secret'));
+        $signature = hash_hmac('sha256', $request->getContent(), config('jet-connect.webhook_secret'));
 
         return hash_equals($request->header('X-JET-Connect-Hash'), $signature);
     }
