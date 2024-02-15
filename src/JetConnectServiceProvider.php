@@ -23,7 +23,7 @@ class JetConnectServiceProvider extends ServiceProvider
         if ($this->app instanceof Application && $this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../config/jet-connect.php' => config_path('jet-connect.php'),
-            ], 'uber-eats-config');
+            ], 'config');
         }
     }
 
@@ -32,7 +32,7 @@ class JetConnectServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../config/jet-connect.php' => config_path('jet-connect.php'),
-            ], 'uber-eats');
+            ], 'config');
         }
 
         $this->mergeConfigFrom(__DIR__ . '/../config/jet-connect.php', 'jet-connect');

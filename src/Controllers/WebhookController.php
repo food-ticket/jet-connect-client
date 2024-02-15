@@ -53,12 +53,12 @@ class WebhookController extends Controller
 
     private function shouldValidateSignature(): bool
     {
-        return ! empty(config('jet-connect.webhook_secret'));
+        return ! empty(config('jet-connect.webhook_hmac_secret'));
     }
 
     private function hasValidSignature(Request $request): bool
     {
-        $signature = hash_hmac('sha256', $request->getContent(), config('jet-connect.webhook_secret'));
+        $signature = hash_hmac('sha256', $request->getContent(), config('jet-connect.webhook_hmac_secret'));
 
         return hash_equals($request->header('X-JET-Connect-Hash'), $signature);
     }
