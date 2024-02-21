@@ -24,7 +24,7 @@ class WebhookController extends Controller
         try {
             $webhook = $this->transformNotification($request);
 
-            Log::info('Webhook received: ' . json_encode([$webhook, $request]));
+            //Log::info('Webhook received: ' . json_encode([$webhook, $request]));
 
             Event::dispatch($webhook->eventName(), $webhook);
 

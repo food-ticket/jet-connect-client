@@ -41,7 +41,8 @@ class JetConnectServiceProvider extends ServiceProvider
     protected function registerMacros(): void
     {
         Route::macro('jetConnectWebhooks', function (string $uri = 'jet-connect/webhooks') {
-            return $this->post($uri, [WebhookController::class, 'handle'])->name('jet-connect.webhooks');
+            return $this->post($uri, [WebhookController::class, 'handle'])
+                ->name('jet-connect.webhooks');
         });
     }
 }

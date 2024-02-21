@@ -8,13 +8,13 @@ use Illuminate\Support\Str;
 
 class JetConnectWebhook
 {
-    protected string $platform = 'jet-connect';
+    public string $platform = 'jet-connect';
 
     public function __construct(
-        protected string $eventName,
-        protected string $restaurantId,
-        protected ?string $resourceId,
-        protected array $payload,
+        public string $eventName,
+        public string $restaurantId,
+        public ?string $resourceId,
+        public array $payload,
     ) {
     }
 
