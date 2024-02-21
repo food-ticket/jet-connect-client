@@ -24,6 +24,8 @@ class WebhookController extends Controller
         try {
             $webhook = $this->transformNotification($request);
 
+            Log::info('Webhook received: ' . json_encode($webhook));
+
             Event::dispatch($webhook->eventName(), $webhook);
 
             return response()->noContent(200, ['Content-Type' => 'application/json']);
@@ -34,6 +36,9 @@ class WebhookController extends Controller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function transformNotification(Request $request): JetConnectWebhook
     {
         $notification = $request->all();
