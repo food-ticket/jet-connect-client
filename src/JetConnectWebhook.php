@@ -51,7 +51,7 @@ class JetConnectWebhook
     public static function fromNotification(array $notification): self
     {
         $type = Arr::get($notification, 'type');
-        $restaurantId = Arr::get($notification, 'location.id') ?? Arr::get($notification, 'posLocationId');
+        $restaurantId = Arr::get($notification, 'posLocationId') ?? Arr::get($notification, 'location.id');
         $resourceId = Arr::get($notification, 'id');
 
         if (! $type) {
