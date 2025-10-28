@@ -6,8 +6,8 @@ This package allows you to easily make requests to JustEatTakeaway's JET Connect
 
 ## Requirements
 
-- PHP >= 8.1
-- Laravel >= 9.0
+- PHP >= 8.2
+- Laravel >= 11.0
 
 ## Installation
 
@@ -35,6 +35,17 @@ $jetConnectApi->setItemAvailability(
     ['itemReferences'],
     $restaurantId,
     $unavailableTill,
+);
+```
+
+### menu
+To ingest a menu, you can use the following code:
+```php
+$jetConnectApi = new JetConnectApi();
+$jetConnectApi->ingestMenu(
+    ['restaurantIds'],
+    $menu,
+    $callbackUrl,
 );
 ```
 
