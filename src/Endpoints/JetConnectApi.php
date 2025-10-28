@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 class JetConnectApi
 {
     use ItemAvailability;
+    use MenuIngest;
 
     public function request(): PendingRequest
     {
