@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Foodticket\JetConnect\Endpoints;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Arr;
 
 trait MenuIngest
 {
     /**
+     * @throws ConnectionException
      * @throws RequestException
      */
     public function ingestMenu(

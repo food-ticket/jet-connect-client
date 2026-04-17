@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Foodticket\JetConnect\Endpoints;
 
 use Foodticket\JetConnect\Enums\Availability;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ trait ItemAvailability
 {
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
     public function setItemAvailability(
         Availability $availability,
