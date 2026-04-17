@@ -2,7 +2,6 @@
 
 namespace Foodticket\JetConnect;
 
-use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -46,7 +45,7 @@ class JetConnectWebhook
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function fromNotification(array $notification): self
     {
@@ -55,7 +54,7 @@ class JetConnectWebhook
         $resourceId = Arr::get($notification, 'id');
 
         if (! $type) {
-            throw new Exception();
+            throw new \Exception('Missing notification type.');
         }
 
         return new self(

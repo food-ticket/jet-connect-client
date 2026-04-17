@@ -14,10 +14,14 @@ class WebhookController extends Controller
     public function handle(Request $request)
     {
         if ($this->shouldValidateApiKey() && ! $this->hasValidApiKey($request)) {
+            report(new \Exception('Invalid API key'));
+
             return response()->json('Invalid API key', 401);
         }
 
         if ($this->shouldValidateSignature() && ! $this->hasValidSignature($request)) {
+            report(new \Exception('Invalid signature'));
+
             return response()->json('Invalid signature', 401);
         }
 
@@ -27,8 +31,8 @@ class WebhookController extends Controller
             Event::dispatch($webhook->eventName(), $webhook);
 
             return response()->noContent(200, ['Content-Type' => 'application/json']);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
+        } catch (\Throwable $e) {
+            report($e);
 
             return response()->json('Error handling webhook', 500);
         }
