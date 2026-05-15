@@ -44,8 +44,9 @@ class WebhookController extends Controller
     private function transformNotification(Request $request): JetConnectWebhook
     {
         $notification = $request->all();
+        $returnUrl = $request->query('callback');
 
-        return JetConnectWebhook::fromNotification($notification);
+        return JetConnectWebhook::fromNotification($notification, $returnUrl);
     }
 
     private function shouldValidateApiKey(): bool
