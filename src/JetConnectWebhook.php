@@ -14,6 +14,7 @@ class JetConnectWebhook
         public string $restaurantId,
         public ?string $resourceId,
         public array $payload,
+        public ?string $returnUrl = null,
     ) {
     }
 
@@ -44,10 +45,15 @@ class JetConnectWebhook
         return $this->payload;
     }
 
+    public function returnUrl(): ?string
+    {
+        return $this->returnUrl;
+    }
+
     /**
      * @throws \Exception
      */
-    public static function fromNotification(array $notification): self
+    public static function fromNotification(array $notification, ?string $returnUrl = null): self
     {
         $type = Arr::get($notification, 'type');
         $restaurantId = Arr::get($notification, 'posLocationId') ?? Arr::get($notification, 'location.id');
@@ -61,7 +67,8 @@ class JetConnectWebhook
             $type,
             $restaurantId,
             $resourceId,
-            $notification
+            $notification,
+            $returnUrl,
         );
     }
 }
