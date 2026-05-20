@@ -13,6 +13,9 @@ class WebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        Log::info(json_encode([(array) $request->query, $request->uri()]));
+        Log::info(json_encode($request->array()));
+
         if ($this->shouldValidateApiKey() && ! $this->hasValidApiKey($request)) {
             report(new \Exception('Invalid API key'));
 
