@@ -13,9 +13,6 @@ class WebhookController extends Controller
 {
     public function handle(Request $request)
     {
-        Log::info(json_encode([(array) $request->query, $request->uri()]));
-        Log::info(json_encode($request->array()));
-
         if ($this->shouldValidateApiKey() && ! $this->hasValidApiKey($request)) {
             report(new \Exception('Invalid API key'));
 
@@ -33,7 +30,7 @@ class WebhookController extends Controller
 
             Event::dispatch($webhook->eventName(), $webhook);
 
-            return response()->noContent(200, ['Content-Type' => 'application/json']);
+            return response()->noContent(202, ['Content-Type' => 'application/json']);
         } catch (\Throwable $e) {
             report($e);
 
