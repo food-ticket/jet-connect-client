@@ -11,6 +11,8 @@ class JetConnectApi
 {
     use ItemAvailability;
     use MenuIngest;
+    use SentToPosFailed;
+    use SentToPosSuccess;
 
     public function request(): PendingRequest
     {

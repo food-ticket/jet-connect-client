@@ -33,7 +33,7 @@ class WebhookController extends Controller
 
             Event::dispatch($webhook->eventName(), $webhook);
 
-            return response()->noContent(200, ['Content-Type' => 'application/json']);
+            return response()->noContent(202, ['Content-Type' => 'application/json']);
         } catch (\Throwable $e) {
             report($e);
 
