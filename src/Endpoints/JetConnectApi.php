@@ -11,6 +11,7 @@ class JetConnectApi
 {
     use ItemAvailability;
     use MenuIngest;
+    use OrderItemModification;
     use SentToPosFailed;
     use SentToPosSuccess;
 
