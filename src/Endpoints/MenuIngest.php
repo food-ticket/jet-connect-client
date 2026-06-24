@@ -18,6 +18,7 @@ trait MenuIngest
         array $restaurants,
         array $menus,
         ?string $callbackUrl = null,
+        ?string $apiKey = null,
     ) {
         $data = [
             'restaurants' => $restaurants,
@@ -28,7 +29,7 @@ trait MenuIngest
             Arr::add($data, 'callback_url', $callbackUrl);
         }
 
-        $response = $this->request()
+        $response = $this->request($apiKey)
             ->post(
                 "/menus",
                 array_filter($data)

@@ -15,12 +15,12 @@ class JetConnectApi
     use SentToPosFailed;
     use SentToPosSuccess;
 
-    public function request(): PendingRequest
+    public function request(?string $apiKey = null): PendingRequest
     {
         return Http::baseUrl(config('jet-connect.api_url'))
             ->asJson()
             ->withHeaders([
-                'X-Flyt-Api-Key' => config('jet-connect.api_key'),
+                'X-Flyt-Api-Key' => $apiKey ?? config('jet-connect.api_key'),
                 'x-jet-application' => config('jet-connect.api_client'),
             ]);
     }

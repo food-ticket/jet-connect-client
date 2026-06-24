@@ -18,8 +18,9 @@ trait OrderItemModification
     public function orderItemModification(
         string $orderId,
         array $modifications,
+        ?string $apiKey = null,
     ) {
-        $response = $this->request()
+        $response = $this->request($apiKey)
             ->post(
                 "/orders/$orderId/modification",
                 ['modifications' => $modifications]

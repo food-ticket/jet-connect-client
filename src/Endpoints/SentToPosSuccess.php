@@ -15,12 +15,13 @@ trait SentToPosSuccess
      */
     public function sentToPosSuccess(
         string $orderId,
+        ?string $apiKey = null,
     ) {
         $data = [
             'happenedAt' => now()->toIso8601String(),
         ];
 
-        $response = $this->request()
+        $response = $this->request($apiKey)
             ->post(
                 "/order/$orderId/sent-to-pos-success",
                 array_filter($data)
