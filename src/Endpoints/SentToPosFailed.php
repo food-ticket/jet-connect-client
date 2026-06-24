@@ -18,6 +18,7 @@ trait SentToPosFailed
         string $orderId,
         ErrorCode $errorCode,
         string $errorMessage,
+        ?string $apiKey = null,
     ) {
         $data = [
             'happenedAt' => now()->toIso8601String(),
@@ -25,7 +26,7 @@ trait SentToPosFailed
             'errorMessage' => $errorMessage,
         ];
 
-        $response = $this->request()
+        $response = $this->request($apiKey)
             ->post(
                 "/order/$orderId/sent-to-pos-failed",
                 array_filter($data)

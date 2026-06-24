@@ -21,6 +21,7 @@ trait ItemAvailability
         array $itemsIds,
         string $restaurant,
         ?Carbon $nextAvailableAt = null,
+        ?string $apiKey = null,
     ) {
         $data = [
             'event' => $availability->value,
@@ -32,7 +33,7 @@ trait ItemAvailability
             Arr::add($data, 'nextAvailableAt', $nextAvailableAt->toIso8601String());
         }
 
-        $response = $this->request()
+        $response = $this->request($apiKey)
             ->post(
                 "/item-availability",
                 array_filter($data)
