@@ -188,6 +188,13 @@ $this->routes(function () {
 });
 ```
 
+Set the API key and HMAC secret JET Connect uses for its webhooks. Both are required: without them every webhook is
+rejected with a 401.
+```dotenv
+JET_CONNECT_WEBHOOK_API_KEY=
+JET_CONNECT_WEBHOOK_HMAC_SECRET=
+```
+
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within this project, please report this by email to [developer@foodticket.nl](mailto:developer@foodticket.nl).

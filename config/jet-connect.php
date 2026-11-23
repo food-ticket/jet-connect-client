@@ -23,9 +23,9 @@ return [
     | Application webhook configuration
     |------------------------------------------------------------
     |
-    | Optionally, if any is configured with JET Connect, set the
-    | credentials which the external API will supply when making
-    | incoming requests to this application's webhooks.
+    | The credentials JET Connect supplies when making incoming requests to
+    | this application's webhooks. Both are required: a webhook is rejected
+    | when either is not configured.
     |
     */
 

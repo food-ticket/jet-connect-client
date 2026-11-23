@@ -16,14 +16,20 @@ class WebhookController extends Controller
         Log::info(json_encode([(array) $request->query, $request->uri()]));
         Log::info(json_encode($request->array()));
 
-        if ($this->shouldValidateApiKey() && ! $this->hasValidApiKey($request)) {
-            report(new \Exception('Invalid API key'));
+        // Both checks always run: without a configured API key or HMAC secret no webhook can be trusted, so it is
+        // rejected instead of let through unchecked.
+        if (! $this->hasValidApiKey($request)) {
+            report(new \Exception(blank(config('jet-connect.webhook_api_key'))
+                ? 'The JET Connect webhook API key is not configured'
+                : 'Invalid API key'));
 
             return response()->json('Invalid API key', 401);
         }
 
-        if ($this->shouldValidateSignature() && ! $this->hasValidSignature($request)) {
-            report(new \Exception('Invalid signature'));
+        if (! $this->hasValidSignature($request)) {
+            report(new \Exception(blank(config('jet-connect.webhook_hmac_secret'))
+                ? 'The JET Connect webhook HMAC secret is not configured'
+                : 'Invalid signature'));
 
             return response()->json('Invalid signature', 401);
         }
@@ -52,25 +58,23 @@ class WebhookController extends Controller
         return JetConnectWebhook::fromNotification($notification, $returnUrl);
     }
 
-    private function shouldValidateApiKey(): bool
-    {
-        return ! empty(config('jet-connect.webhook_api_key'));
-    }
-
     private function hasValidApiKey(Request $request): bool
     {
-        return $request->header('Authorization') === config('jet-connect.webhook_api_key');
-    }
+        $apiKey = config('jet-connect.webhook_api_key');
+        $header = $request->header('Authorization');
 
-    private function shouldValidateSignature(): bool
-    {
-        return ! empty(config('jet-connect.webhook_hmac_secret'));
+        return filled($apiKey) && filled($header) && hash_equals((string) $apiKey, (string) $header);
     }
 
     private function hasValidSignature(Request $request): bool
     {
-        $signature = hash_hmac('sha256', $request->getContent(), config('jet-connect.webhook_hmac_secret'));
+        $secret = config('jet-connect.webhook_hmac_secret');
+        $hash = $request->header('X-JET-Connect-Hash');
 
-        return hash_equals($request->header('X-JET-Connect-Hash'), $signature);
+        if (blank($secret) || blank($hash)) {
+            return false;
+        }
+
+        return hash_equals(hash_hmac('sha256', $request->getContent(), (string) $secret), (string) $hash);
     }
 }
