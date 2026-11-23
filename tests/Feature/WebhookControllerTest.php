@@ -74,11 +74,50 @@ class WebhookControllerTest extends TestCase
     #[Test]
     public function a_webhook_with_a_signature_of_another_body_is_rejected(): void
     {
-        $signature = hash_hmac('sha256', '{"type":"other"}', self::SECRET);
-
-        $this->sendWebhook(signature: $signature)->assertStatus(401)->assertExactJson(['Invalid signature']);
+        $this->sendWebhook(signature: self::jetHeader('{"type":"other"}', self::SECRET))
+            ->assertStatus(401)
+            ->assertExactJson(['Invalid signature']);
 
         Event::assertNotDispatched('jet-connect-webhooks.order-created');
+    }
+
+    /**
+     * The example in the JET Connect docs: the secret "key" and the body "example" give this signature.
+     */
+    #[Test]
+    public function the_signature_of_the_example_in_the_jet_connect_docs_is_valid(): void
+    {
+        config(['jet-connect.webhook_hmac_secret' => 'key']);
+        $headers = [
+            'Authorization' => self::API_KEY,
+            'X-JET-Connect-Hash' => 'HMAC-SHA256 t=1673428038618,'
+                .'signature=FGwot7AqiDIthEv6TippJm35DaRpRac5NSLd/wSp9go=',
+        ];
+
+        // Past both checks; "example" is no notification, so handling it fails afterwards.
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('POST', 'jet-connect/webhooks', [], [], [], $server, 'example')
+            ->assertStatus(500)
+            ->assertExactJson(['Error handling webhook']);
+    }
+
+    #[Test]
+    public function a_hex_signature_without_the_jet_format_is_rejected(): void
+    {
+        $body = self::body();
+
+        $this->sendWebhook(signature: hash_hmac('sha256', $body, self::SECRET))
+            ->assertStatus(401)
+            ->assertExactJson(['Invalid signature']);
+    }
+
+    #[Test]
+    public function a_header_without_a_signature_part_is_rejected(): void
+    {
+        $this->sendWebhook(signature: 'HMAC-SHA256 t=1673428038618')
+            ->assertStatus(401)
+            ->assertExactJson(['Invalid signature']);
     }
 
     #[Test]
@@ -100,8 +139,8 @@ class WebhookControllerTest extends TestCase
      */
     private function sendWebhook(?string $apiKey = self::API_KEY, ?string $signature = ''): TestResponse
     {
-        $body = json_encode(['type' => 'Order.Created', 'id' => 'order-1', 'posLocationId' => 'location-1']);
-        $signature = $signature === '' ? hash_hmac('sha256', $body, self::SECRET) : $signature;
+        $body = self::body();
+        $signature = $signature === '' ? self::jetHeader($body, self::SECRET) : $signature;
 
         $headers = array_filter([
             'Authorization' => $apiKey,
@@ -112,5 +151,18 @@ class WebhookControllerTest extends TestCase
         $server = $this->transformHeadersToServerVars($headers);
 
         return $this->call('POST', 'jet-connect/webhooks', [], [], [], $server, $body);
+    }
+
+    private static function body(): string
+    {
+        return json_encode(['type' => 'Order.Created', 'id' => 'order-1', 'posLocationId' => 'location-1']);
+    }
+
+    /**
+     * The X-JET-Connect-Hash header as JET sends it: the base64 HMAC-SHA256 of the raw body.
+     */
+    private static function jetHeader(string $body, string $secret): string
+    {
+        return 'HMAC-SHA256 t=1795447168160,signature='.base64_encode(hash_hmac('sha256', $body, $secret, true));
     }
 }
