@@ -6,16 +6,12 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 use Foodticket\JetConnect\JetConnectWebhook;
 
 class WebhookController extends Controller
 {
     public function handle(Request $request)
     {
-        Log::info(json_encode([(array) $request->query, $request->uri()]));
-        Log::info(json_encode($request->array()));
-
         // Both checks always run: without a configured API key or HMAC secret no webhook can be trusted, so it is
         // rejected instead of let through unchecked.
         if (! $this->hasValidApiKey($request)) {
